@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "LAtt8FWUqZDxlGcNILXe2H4hhIKJMU3vKZVuSwAR7/cx1+a0aXAjDw0NssDv3KZKNhhWrObjtIp2QsHNYFWlwQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\apput\\OneDrive\\Desktop\\Kubernetes_lc\\GreetingWebApp\\GreetingWebApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\apput\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.29\\microsoft.netcore.app.ref.6.0.29.nupkg.sha512",
+    "C:\\Users\\apput\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.29\\microsoft.windowsdesktop.app.ref.6.0.29.nupkg.sha512",
+    "C:\\Users\\apput\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.29\\microsoft.aspnetcore.app.ref.6.0.29.nupkg.sha512",
+    "C:\\Users\\apput\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.29\\microsoft.netcore.app.host.win-x64.6.0.29.nupkg.sha512"
+  ],
+  "logs": []
+}
