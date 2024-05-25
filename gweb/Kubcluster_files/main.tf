@@ -39,9 +39,4 @@ resource "azurerm_kubernetes_cluster" "aparna_aks" {
   identity {
     type = "SystemAssigned"
   }
-  
-  service_principal {
-    client_id     = "56062a47-bd5b-4f13-bb58-f0b482ec25c5"
-    client_secret = "7e2729b0-e12c-4a5f-bb74-689e988c1c8d"
-  }
 }
