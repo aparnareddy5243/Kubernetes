@@ -1,39 +1,34 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
 steps:
 - task: TerraformInstaller@1
   inputs:
     terraformVersion: 'latest'
- 
+
+# Initialize Terraform
 - task: TerraformTaskV4@4
   inputs:
     provider: 'azurerm'
     command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/kubcluster_files'
     backendServiceArm: 'azure_connection'
-    backendAzureRmResourceGroupName: 'ap_rg1'
-    backendAzureRmStorageAccountName: 'terraform524'
-    backendAzureRmContainerName: 'kubecontainer'
-    backendAzureRmKey: 'terraform.tfstate'
+    backendAzureRm: true
+    backendConfiguration: |
+      storage_account_name=terraform524
+      container_name=kubecontainer
+      key=terraform.tfstate
+      resource_group_name=ap_rg1
+      subscription_id=606e824b-aaf7-4b4e-9057-b459f6a4436d
+      tenant_id=104e77d4-81e7-4c16-ab44-935220bed6dd
 
+# Apply Terraform configuration
 - task: TerraformTaskV4@4
   inputs:
     provider: 'azurerm'
     command: 'apply'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/kubcluster_files'
     environmentServiceNameAzureRM: 'azure_connection'
-
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Pipeline.Workspace)'
-    artifact: 'manifest'
-    publishLocation: 'pipeline'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    commandOptions: '-auto-approve'
