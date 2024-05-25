@@ -1,0 +1,31 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: capstonedockerimage 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: capstonedockerimage
+  template:
+    metadata:
+      labels:
+        app: capstonedockerimage 
+    spec:
+      containers:
+        - name: capstonedockerimage 
+          image: new2continerregistry.azurecr.io/capstonedockerimage
+          ports:
+          - containerPort: 80
+--------
+
+apiVersion: v1
+kind: Service
+metadata:
+    name: capstonedockerimage
+spec:
+    type: LoadBalancer
+    ports:
+    - port: 80 
+    selector:
+        app: capstonedockerimage
