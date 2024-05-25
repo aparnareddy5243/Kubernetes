@@ -16,13 +16,12 @@ steps:
     command: 'init'
     backendServiceArm: 'azure_connection'
     backendAzureRm: true
-    backendConfiguration: |
-      storage_account_name=terraform524
-      container_name=kubecontainer
-      key=terraform.tfstate
-      resource_group_name=ap_rg1
-      subscription_id=606e824b-aaf7-4b4e-9057-b459f6a4436d
-      tenant_id=104e77d4-81e7-4c16-ab44-935220bed6dd
+    backendAzureRmStorageAccountName: 'terraform524'
+    backendAzureRmContainerName: 'kubecontainer'
+    backendAzureRmKey: 'terraform.tfstate'
+    backendAzureRmResourceGroupName: 'ap_rg1'
+    backendAzureRmSubscriptionId: '606e824b-aaf7-4b4e-9057-b459f6a4436d'
+    backendAzureRmTenantId: '104e77d4-81e7-4c16-ab44-935220bed6dd'
 
 # Apply Terraform configuration
 - task: TerraformTaskV4@4
