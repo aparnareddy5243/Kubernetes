@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: simple-webpage
+spec:
+    type: LoadBalancer
+    ports:
+    - port: 80 
+    selector:
+        app: simple-webpage 
