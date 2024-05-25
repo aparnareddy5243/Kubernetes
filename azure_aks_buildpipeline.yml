@@ -1,0 +1,47 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+# Check out the repository containing the Terraform configuration files
+- task: Checkout@1
+  displayName: 'Checkout Code'
+  inputs:
+    clean: true
+
+# Install Terraform using a script to ensure the binary is correctly placed in the PATH
+- script: |
+    curl -LO https://releases.hashicorp.com/terraform/1.8.4/terraform_1.8.4_linux_amd64.zip
+    unzip terraform_1.8.4_linux_amd64.zip
+    sudo mv terraform /usr/local/bin/
+  displayName: 'Install Terraform'
+
+# Verify the Terraform installation
+- script: |
+    terraform --version
+  displayName: 'Verify Terraform Installation'
+
+# Initialize Terraform
+- script: |
+    terraform init \
+      -backend-config="storage_account_name=terraform524" \
+      -backend-config="container_name=kubecontainer" \
+      -backend-config="key=terraform.tfstate" \
+      -backend-config="resource_group_name=ap_rg1" \
+      -backend-config="subscription_id=606e824b-aaf7-4b4e-9057-b459f6a4436d" \
+      -backend-config="tenant_id=104e77d4-81e7-4c16-ab44-935220bed6dd"
+  displayName: 'Terraform Init'
+  workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+# Apply Terraform configuration
+- script: |
+    terraform apply -auto-approve
+  displayName: 'Terraform Apply'
+  workingDirectory: '$(System.DefaultWorkingDirectory)'
+  env:
+    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+    ARM_TENANT_ID: $(ARM_TENANT_ID)
