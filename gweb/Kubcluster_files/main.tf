@@ -10,7 +10,7 @@ terraform {
     resource_group_name   = "ap_rg1"
     storage_account_name  = "terraform524"
     container_name        = "kubecontainer"
-    # No key specified here
+    key                   = "terraform_dev.tfstate"
   }
 }
 
@@ -19,14 +19,14 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "aparna_aks_rg" {
-  location = var.resource_group_location
   name     = var.resource_group_name
+  location = var.resource_group_location
 }
 
 resource "azurerm_kubernetes_cluster" "aparna_aks" {
   name                = var.azurerm_kubernetes_cluster
-  location            = var.resource_group_location
-  resource_group_name = var.resource_group_name
+  location            = azurerm_resource_group.aparna_aks_rg.location
+  resource_group_name = azurerm_resource_group.aparna_aks_rg.name
   dns_prefix          = "aparna-aks"
   depends_on          = [azurerm_resource_group.aparna_aks_rg]
 
@@ -39,4 +39,4 @@ resource "azurerm_kubernetes_cluster" "aparna_aks" {
   identity {
     type = "SystemAssigned"
   }
-
+}
