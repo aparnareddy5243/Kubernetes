@@ -29,5 +29,5 @@ steps:
     provider: 'azurerm'
     command: 'apply'
     environmentServiceNameAzureRM: 'azure_connection'
-    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/kubcluster_files'
     commandOptions: '-auto-approve'
