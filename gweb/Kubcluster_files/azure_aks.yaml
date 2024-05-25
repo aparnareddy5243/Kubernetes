@@ -1,20 +1,20 @@
 apiVersion : apps/v1
 kind: Deployment
 metadata:
-  name: capstonedockerimage 
+  name: simple-webpage
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: capstonedockerimage
+      app: simple-webpage
   template:
     metadata:
       labels:
-        app: capstonedockerimage 
+        app: simple-webpage 
     spec:
       containers:
-        - name: capstonedockerimage 
-          image: new2continerregistry.azurecr.io/capstonedockerimage
+        - name: simple-webpage 
+          image: new2continerregistry.azurecr.io/csimple-webpage 
           ports:
           - containerPort: 80
 --------
@@ -22,10 +22,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: capstonedockerimage
+    name: simple-webpage 
 spec:
     type: LoadBalancer
     ports:
     - port: 80 
     selector:
-        app: capstonedockerimage
+        app: simple-webpage 
