@@ -9,6 +9,9 @@ steps:
   inputs:
     terraformVersion: 'latest'
 
+- script: terraform --version
+  displayName: 'Verify Terraform Installation'
+
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'azure_connection'
