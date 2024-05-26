@@ -9,7 +9,7 @@ terraform {
   backend "azurerm" {
     resource_group_name   = "ap_rg1"
     storage_account_name  = "terraform524"
-    container_name        = "kubecontainer"
+    container_name        = "container52"
     key                   = "terraform_dev.tfstate"
   }
 }
