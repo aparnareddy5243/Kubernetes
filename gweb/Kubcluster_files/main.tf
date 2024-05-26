@@ -10,7 +10,7 @@ terraform {
     resource_group_name   = "ap_rg1"
     storage_account_name  = "terraform524"
     container_name        = "kubecontainer"
-    key                   = "terraform_dev1.tfstate"
+    key                   = "terraform_dev.tfstate"
   }
 }
 
