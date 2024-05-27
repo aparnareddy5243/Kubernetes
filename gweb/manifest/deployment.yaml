@@ -1,4 +1,4 @@
-apiVersion : apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: test-deployment
@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: test
-          image: new2continerregistry.azurecr.io/greeting-web:latest:$(Build.BuildId)
+          image: new2continerregistry.azurecr.io/greeting-web:latest
           ports:
-          - containerPort: 80
+            - containerPort: 80
