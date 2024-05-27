@@ -4,139 +4,44 @@
 # https://aka.ms/yaml
 
 trigger: 
- - main
+  - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
-variables:
-  storagerg: 'ap_rg1'
-  storageAccountName: 'terraform524'
-  containerName: 'container52'
-  devbkkey: 'dev.terraform.tfstate'
-  prodbkkey: 'prod.terraform.tfstate'
-  vmImageName: 'ubuntu-latest'
-  pythonVersion: '3.11'
-  projectRoot: $(System.DefaultWorkingDirectory)
+steps:
+  - task: TerraformTaskV4@4
+    inputs:
+      provider: 'azurerm'
+      command: 'init'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/dev.tfvars'
+      backendServiceArm: 'azure_connection'
+      backendAzureRmResourceGroupName: 'ap_rg1'
+      backendAzureRmStorageAccountName: 'terraform524'
+      backendAzureRmContainerName: 'container52'
+      backendAzureRmKey: 'terraform_dev.tfstate'
 
-stages:
-  - stage: devinitialize
-    jobs:
-      - job: validate
-        continueOnError: false
-        steps:
-          - task: TerraformInstaller@1
-            displayName: tfinstall
-            inputs:
-              terraformVersion: 'latest'
-          - task: TerraformTaskV4@4
-            displayName: init
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/dev.tfvars'
-              backendServiceArm: 'azure_connection'
-              backendAzureRmResourceGroupName: '$(storagerg)'
-              backendAzureRmStorageAccountName: '$(storageAccountName)'
-              backendAzureRmContainerName: '$(containerName)'
-              backendAzureRmKey: '$(devbkkey)'
-          - task: TerraformTaskV4@4
-            displayName: Validate
-            inputs:
-              provider: 'azurerm'
-              command: 'validate'
-  - stage: provisiondev
-    condition: succeeded('devinitialize')
-    dependsOn: devinitialize
-    jobs:
-      - job: apply
-        steps: 
-          - task: TerraformInstaller@1
-            displayName: tfinstall
-            inputs:
-              terraformVersion: 'latest'
-          - task: TerraformTaskV4@4
-            displayName: init
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/dev.tfvars'
-              backendServiceArm: 'azure_connection'
-              backendAzureRmResourceGroupName: '$(storagerg)'
-              backendAzureRmStorageAccountName: '$(storageAccountName)'
-              backendAzureRmContainerName: '$(containerName)'
-              backendAzureRmKey: '$(devbkkey)'
-          - task: TerraformTaskV4@4
-            displayName: plan
-            inputs:
-              provider: 'azurerm'
-              command: 'plan'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/dev.tfvars'
-              environmentServiceNameAzureRM: 'azure_connection'
-          - task: TerraformTaskV4@4
-            displayName: apply
-            inputs:
-              provider: 'azurerm'
-              command: 'apply'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/dev.tfvars'
-              environmentServiceNameAzureRM: 'azure_connection'
-  - stage: prodinitialize
-    jobs:
-      - job: validate
-        continueOnError: false
-        steps:
-          - task: TerraformInstaller@1
-            displayName: tfinstall
-            inputs:
-              terraformVersion: 'latest'
-          - task: TerraformTaskV4@4
-            displayName: init
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/prd.tfvars'
-              backendServiceArm: 'azure_connection'
-              backendAzureRmResourceGroupName: '$(storagerg)'
-              backendAzureRmStorageAccountName: '$(storageAccountName)'
-              backendAzureRmContainerName: '$(containerName)'
-              backendAzureRmKey: '$(prodbkkey)'
-          - task: TerraformTaskV4@4
-            displayName: Validate
-            inputs:
-              provider: 'azurerm'
-              command: 'validate'
-  - stage: provisionprod
-    condition: succeeded('prodinitialize')
-    dependsOn: prodinitialize
-    jobs:
-      - job: apply
-        steps: 
-          - task: TerraformInstaller@1
-            displayName: tfinstall
-            inputs:
-              terraformVersion: 'latest'
-          - task: TerraformTaskV4@4
-            displayName: init
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/prd.tfvars'
-              backendServiceArm: 'azure_connection'
-              backendAzureRmResourceGroupName: '$(storagerg)'
-              backendAzureRmStorageAccountName: '$(storageAccountName)'
-              backendAzureRmContainerName: '$(containerName)'
-              backendAzureRmKey: '$(prodbkkey)'
-          - task: TerraformTaskV4@4
-            displayName: plan
-            inputs:
-              provider: 'azurerm'
-              command: 'plan'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/prd.tfvars'
-              environmentServiceNameAzureRM: 'azure_connection'
-          - task: TerraformTaskV4@4
-            displayName: apply
-            inputs:
-              provider: 'azurerm'
-              command: 'apply'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/prd.tfvars'
-              environmentServiceNameAzureRM: 'azure_connection' 
+  - task: TerraformTaskV4@4
+    inputs:
+      provider: 'azurerm'
+      command: 'apply'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/dev.tfvars'
+      environmentServiceNameAzureRM: 'azure_connection'
+
+  - task: TerraformTaskV4@4
+    inputs:
+      provider: 'azurerm'
+      command: 'init'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/prod.tfvars'
+      backendServiceArm: 'azure_connection'
+      backendAzureRmResourceGroupName: 'ap_rg1'
+      backendAzureRmStorageAccountName: 'terraform524'
+      backendAzureRmContainerName: 'container52'
+      backendAzureRmKey: 'terraform_prod.tfstate'
+
+  - task: TerraformTaskV4@4
+    inputs:
+      provider: 'azurerm'
+      command: 'apply'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/prod.tfvars'
+      environmentServiceNameAzureRM: 'azure_connection'
