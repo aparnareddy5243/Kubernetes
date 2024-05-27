@@ -1,47 +1,48 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-trigger: 
-  - main
+# azure-pipelines.yml
+trigger:
+- main
 
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-  - task: TerraformTaskV4@4
-    inputs:
-      provider: 'azurerm'
-      command: 'init'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/dev.tfvars'
-      backendServiceArm: 'azure_connection'
-      backendAzureRmResourceGroupName: 'ap_rg1'
-      backendAzureRmStorageAccountName: 'terraform524'
-      backendAzureRmContainerName: 'container52'
-      backendAzureRmKey: 'terraform_dev.tfstate'
+variables:
+  # Terraform version to install
+  terraformVersion: '1.2.0'
+  # Azure service connection name
+  azureServiceConnection: 'azure_connection' # Ensure this matches the name of your service connection
 
-  - task: TerraformTaskV4@4
-    inputs:
-      provider: 'azurerm'
-      command: 'apply'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/dev.tfvars'
-      environmentServiceNameAzureRM: 'azure_connection'
+stages:
+- stage: Terraform
+  jobs:
+  - job: Terraform
+    displayName: 'Terraform Apply'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
 
-  - task: TerraformTaskV4@4
-    inputs:
-      provider: 'azurerm'
-      command: 'init'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/prod.tfvars'
-      backendServiceArm: 'azure_connection'
-      backendAzureRmResourceGroupName: 'ap_rg1'
-      backendAzureRmStorageAccountName: 'terraform524'
-      backendAzureRmContainerName: 'container52'
-      backendAzureRmKey: 'terraform_prod.tfstate'
+    - task: TerraformInstaller@0
+      inputs:
+        terraformVersion: $(terraformVersion)
 
-  - task: TerraformTaskV4@4
-    inputs:
-      provider: 'azurerm'
-      command: 'apply'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/Kubcluster_files/prod.tfvars'
-      environmentServiceNameAzureRM: 'azure_connection'
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: $(azureServiceConnection)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo "##[section]Initializing Terraform"
+          terraform init -backend-config="resource_group_name=ap_rg1" \
+                         -backend-config="storage_account_name=terraform524" \
+                         -backend-config="container_name=container52" \
+                         -backend-config="key=terraform_dev.tfstate"
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: $(azureServiceConnection)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo "##[section]Applying Terraform Plan"
+          terraform apply -var-file=dev.tfvars -auto-approve
