@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: test
-          image: new2continerregistry.azurecr.io/greeting-web:latest
+          image: new2continerregistry.azurecr.io/greeting-web:latest:$(Build.BuildId)
           ports:
             - containerPort: 80
 
@@ -31,4 +31,3 @@ spec:
       targetPort: 80
   selector:
     app: test 
-    
