@@ -1,19 +1,19 @@
 apiVersion : apps/v1
 kind: Deployment
 metadata:
-  name: simple-webpage
+  name: test
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: simple-webpage
+      app: test
   template:
     metadata:
       labels:
-        app: simple-webpage
+        app: test
     spec:
       containers:
-        - name: simple-webpage
-          image: new2continerregistry.azurecr.io/simple-webpage:$(Build.BuildId)
+        - name: test
+          image: new2continerregistry.azurecr.io/test:$(Build.BuildId)
           ports:
           - containerPort: 80
