@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-deployment
+  name: test
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: test1
+      app: test
   template:
     metadata:
       labels:
-        app: test1
+        app: test
     spec:
       containers:
         - name: test
-          image: new2continerregistry.azurecr.io/greeting-web:latest
+          image: new2continerregistry.azurecr.io/test
           ports:
             - containerPort: 80
