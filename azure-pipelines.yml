@@ -1,53 +1,48 @@
+# azure-pipelines.yml
 trigger:
 - main
 
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- task: TerraformInstaller@1
-  inputs:
-    terraformVersion: 'latest'
+variables:
+  # Terraform version to install
+  terraformVersion: '1.2.0'
+  # Azure service connection name
+  azureServiceConnection: 'azure_connection' # Ensure this matches the name of your service connection
 
-- script: terraform --version
-  displayName: 'Verify Terraform Installation'
+stages:
+- stage: Terraform
+  jobs:
+  - job: Terraform
+    displayName: 'Terraform Apply'
+    steps:
+    - checkout: self
 
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'azure_connection'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Logging in to Azure"
-      az login --service-principal -u "5feb75a8-8f8e-4940-89ad-c41a5bc8d379" -p "oRd8Q~pl.mQ162TWR3uVgW~tAFOWcUlhEhfxWdjf" --tenant "104e77d4-81e7-4c16-ab44-935220bed6dd"
-      echo "Azure login successful"
 
-- task: TerraformTaskV4@4
-  inputs:
-    provider: 'azurerm'
-    command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/kubcluster_files'
-    backendServiceArm: 'azure_connection'
-    backendAzureRmResourceGroupName: 'ap_rg1'
-    backendAzureRmStorageAccountName: 'terraform524'
-    backendAzureRmContainerName: 'kubecontainer'
-    backendAzureRmKey: 'terraform_dev.tfstate'
+    - task: TerraformInstaller@0
+      inputs:
+        terraformVersion: $(terraformVersion)
 
-- task: TerraformTaskV4@4
-  inputs:
-    provider: 'azurerm'
-    command: 'plan'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/kubcluster_files'
-    commandOptions: '-out main.tfplan --var-file=dev.tfvars'
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: $(azureServiceConnection)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo "##[section]Initializing Terraform"
+          cd gweb/Kubcluster_files
+          terraform init -backend-config="resource_group_name=ap_rg1" \
+                         -backend-config="storage_account_name=terraform524" \
+                         -backend-config="container_name=container52" \
+                         -backend-config="key=terraform_dev.tfstate"
 
-- task: TerraformTaskV4@4
-  inputs:
-    provider: 'azurerm'
-    command: 'apply'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/gweb/kubcluster_files'
-    commandOptions: 'main.tfplan'
-    backendServiceArm: 'azure_connection'
-    backendAzureRmResourceGroupName: 'ap_rg1'
-    backendAzureRmStorageAccountName: 'terraform524'
-    backendAzureRmContainerName: 'kubecontainer'
-    backendAzureRmKey: 'terraform_dev.tfstate'
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: $(azureServiceConnection)
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo "##[section]Applying Terraform Plan"
+          cd gweb/Kubcluster_files
+          terraform plan -var-file=dev.tfvars 
