@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test
+  name: test-deployment
 spec:
   replicas: 1
   selector:
@@ -14,18 +14,21 @@ spec:
     spec:
       containers:
         - name: test
-          image: new2continerregistry.azurecr.io/test
+          image: new2continerregistry.azurecr.io/greeting-web:latest
           ports:
             - containerPort: 80
+
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: test
+  name: test-loadbalancer
 spec:
   type: LoadBalancer
   ports:
-    - port: 80 
+    - port: 80
+      targetPort: 80
   selector:
-    app: test
-
+    app: test 
+    
