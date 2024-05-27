@@ -17,10 +17,8 @@ stages:
   - job: Terraform
     displayName: 'Terraform Apply'
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.x'
-        addToPath: true
+    - checkout: self
+
 
     - task: TerraformInstaller@0
       inputs:
@@ -33,6 +31,7 @@ stages:
         scriptLocation: 'inlineScript'
         inlineScript: |
           echo "##[section]Initializing Terraform"
+          cd gweb/Kubcluster_files
           terraform init -backend-config="resource_group_name=ap_rg1" \
                          -backend-config="storage_account_name=terraform524" \
                          -backend-config="container_name=container52" \
@@ -45,4 +44,5 @@ stages:
         scriptLocation: 'inlineScript'
         inlineScript: |
           echo "##[section]Applying Terraform Plan"
-          terraform apply -var-file=dev.tfvars -auto-approve
+          cd gweb/Kubcluster_files
+          terraform plan -var-file=dev.tfvars 
