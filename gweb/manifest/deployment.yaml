@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: simple-webpage
-          image: new2continerregistry.azurecr.io/simple-webpage
+          image: new2continerregistry.azurecr.io/simple-webpage:$(Build.BuildId)
           ports:
           - containerPort: 80
