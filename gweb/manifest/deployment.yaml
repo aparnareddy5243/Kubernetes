@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
         - name: test
-          image: new2continerregistry.azurecr.io/test:108
+          image: new2continerregistry.azurecr.io/test:$(Build.BuildId)
           ports:
             - containerPort: 80
 
